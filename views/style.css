@@ -1,0 +1,32 @@
+body{
+    background-color: Black;
+}
+#chat-area{
+    color: #00ccff;
+    border: solid thin #00ccff;
+    background-color: #191919;
+    min-height: 80%;
+}
+#typing-area{
+    position: fixed; bottom: 0;
+    width:100%;
+}
+
+#type-message{
+    width: 80%;
+}
+#sub-but{
+    color: #00ccff;
+    background-color: Black;
+    border: thick solid gray;
+}
+
+li{
+    color: white;
+    list-style-type:none;
+    border: thin solid Black;
+    margin: 1%;
+    padding: 1%;
+    word-wrap: break-word;
+    
+}
