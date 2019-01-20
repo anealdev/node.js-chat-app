@@ -1,0 +1,19 @@
+{
+  "name": "chat-app",
+  "version": "0.0.0",
+  "description": "A chat application built with Node.js",
+  "main": "index.js",
+  "author": "aneal",
+  "dependencies": {
+    "async": "~0.2.8",
+    "express": "^4.15.2",
+    "jquery": "^3.3.1",
+    "popper.js": "^1.14.6",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "ISC"
+}
