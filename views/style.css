@@ -1,12 +1,24 @@
 body{
     background-color: Black;
 }
+
+.nav{
+    display: inline-block;
+    color: #b4b4b4;
+}
+
 #chat-area{
     color: #00ccff;
     border: solid thin #00ccff;
     background-color: #191919;
     min-height: 80%;
+    width: 75%;
 }
+
+#messages{
+    color: #f2f2f2;
+}
+
 #typing-area{
     position: fixed; bottom: 0;
     width:100%;

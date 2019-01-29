@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+  <!-- bootstrap css -->
+ <!-- main css -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'</script></script>
+
+  <title>Node.js Chat App
+  </title>
+</head>
+
+<body> 
+<span><a href="logout">logout</a></span>
+<div>
+  <ul>
+    <li> ${user.name}</li>
+    <li> ${user.email}</li>
+  </ul>
+  
+</div>
+<div id=chat-area>
+<h1 id="test">Your message displays here</h1>
+<ul id = "messages"></ul>
+</div>
+<div id = typing-area>
+  <form name = "message" action="" id= "message-form" type="text">
+    <h2>-----</h2>
+    <input id = type-message placeholder="Type your message" maxlength=150>
+    <button type="submit" id="sub-but">Submit</button>
+    </form>
+    
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script> <!-- loads socket.io-client, exposes io() globally -->
+<script src="message_handle.js"></script>
+</body>
+</html>

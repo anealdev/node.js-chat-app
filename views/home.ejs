@@ -3,19 +3,21 @@
 <html lang="en">
 
 <head>
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="../style.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
  
   <!-- bootstrap css -->
  <!-- main css -->
-  
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
 
   <title>Node.js Chat App
   </title>
 </head>
 
 <body> 
+<span><h4 class='nav'>Hello <%= name %> || </h4> <a href="logout" class='nav'> logout </a></span>
+
 <div id=chat-area>
 <h1 id="test">Your message displays here</h1>
 <ul id = "messages"></ul>
@@ -30,6 +32,6 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script> <!-- loads socket.io-client, exposes io() globally -->
-<script src="message_handle.js"></script>
+<script src="../message_handle.js"></script>
 </body>
 </html>
