@@ -16,11 +16,16 @@
 </head>
 
 <body> 
-<span><h4 class='nav'>Hello <%= name %> || </h4> <a href="logout" class='nav'> logout </a></span>
-
-<div id=chat-area>
+<span><h4 id="name" class='nav'>Hello <%= name %></h4> <a href="logout" class='nav'>   logout   </a></span>
+<div id="container">
+<span id="chat-area">
 <h1 id="test">Your message displays here</h1>
 <ul id = "messages"></ul>
+</span>
+
+<span id="whos-online"><h3>Who's Online</h3>
+<ul id="whos-online-list"></ul>
+</span>
 </div>
 <div id = typing-area>
   <form name = "message" action="" id= "message-form" type="text">
