@@ -15,6 +15,16 @@ body{
     width: 75%;
 }
 
+.username{
+    float: left;
+    color: #00ccff;
+    width: 10%;
+}
+
+#user-msg {
+    color: #d9d9d9;
+}
+
 #messages{
     color: #f2f2f2;
 }
@@ -31,6 +41,15 @@ body{
     color: #00ccff;
     background-color: Black;
     border: thick solid gray;
+}
+
+#whos-online {
+    color: #00ccff;
+    border: solid thin #00ccff;
+    background-color: #191919;
+    width: 15%;
+    float: right;
+    margin: 2%;
 }
 
 li{

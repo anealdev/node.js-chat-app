@@ -12,6 +12,10 @@ const session_secret = process.env.SESSION_SECRET;
 const bodyParser = require('body-parser');
 const path = require('path');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const bcryptSaltRounds = 12;
+var user;
+var userList = [];
 
 mongoose.connect('mongodb://velma:&inkies101@ds115595.mlab.com:15595/chat', {
     useNewUrlParser: true
@@ -60,22 +64,22 @@ app.use(session({
 }));
 
 const redirectLogin = (req, res, next) => {
-    console.log("checking redirectLogin " + req.session.userId);
     if(!req.session.userId){
-        res.redirect('/login')
+        res.redirect('/login');
     }else{
-        next()
+        user = req.session.name;
+        next();
     }
-}
+};
 
 const redirectHome = (req, res, next) => {
-    console.log("checking redirectHome " + req.session.userId);
     if(req.session.userId){
-        res.redirect('/home')
+        user = req.session.name;
+        res.redirect('/home');
     }else{
-        next()
+        next();
     }
-}
+};
 
 app.get('/', (req, res) => {
     const { userId } = req.session;
@@ -97,25 +101,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/home', redirectLogin, (req, res) => {
-    console.log("home: " + req.session.userId);
-    res.render('home', { name: req.session.name}); 
-  // get user id here to send to home page
- /* User.find({_id: req.session.userId}, function(error, data){
-      var name = data[0].name;
-      res.render('home', { name: name});  
-  });
-  */
+     res.render('home', { name: req.session.name}); 
 });
-
-/*app.get('/home', redirectLogin, (req, res) => {
-    const user = users.find(user => user.id === req.session.userId);
-    
-    console.log('home page');
-    const { userId } = req.session;
-    //const userId = 1;
-    res.sendFile(__dirname + '/static/home.html');
-    });
-*/
 
 app.get('/login', redirectHome, (req, res) => { // have a login html file for this
     res.send(`
@@ -145,64 +132,74 @@ app.get('/register', redirectHome, (req, res) => {
 app.post('/login', redirectHome, (req, res) => {
     const { email, password } = req.body;
     if(email && password){
-        User.find({email: email,password: password}, 'name', function(error, data){
+        User.find({email: email}, function(error, data){
             if(error){
                 console.log(error);
             }if(data[0] !== undefined){
-            console.log("data: " + data);
-            console.log("user verified");
-            req.session.userId = data[0]._id;
-            req.session.name = data[0].name;
-            console.log('Name: ' + data);
-            return res.redirect('/home');
+            // decrypt and confirm password
+            
+            var match = bcrypt.compareSync(password ,data[0].password);
+            
+                if(match === true){
+                    req.session.userId = data[0]._id;
+                    req.session.name = data[0].name;
+                
+                return res.redirect('/home');
+                }else{
+                    
+                    res.redirect('/login');     
+                }
             }else{
-                console.log("no match, redirecting login");
+                
                 res.redirect('/login'); 
             }
                 
             });
-   /*if(user){
-        req.session.userId = user.id;
-        console.log(req.session.userId + " redirecting home");
-        return res.redirect('/home');
-    }
-        
-    } */
-    
-}});
+  }});
 
 app.post('/register', redirectHome, (req, res) => {
     const { name, email, password } = req.body;
-    var emailFound = false;
     User.find({email: email}, function(error, data){
         if(error){
             console.log(error);
             return;
         }
         if(data.length == 0){
-            console.log("Email available");
-            // hash the passwords for real site
-            User.create({
+            
+            bcrypt.hash(password, bcryptSaltRounds)
+            .then(function(hashedPassword){
+                User.create({
                 name: name,
                 email: email,
-                password: password
-            });
-            
-        }else{
-            return res.redirect('/register');
-        }
-        User.find({email: email}, function(error, data){
+                password: hashedPassword
+            })
+            .then(function(){
+                User.find({email: email}, function(error, data){
            if(error){
                console.log(error);
            }
             req.session.userId = data[0]._id;
             req.session.name = data[0].name;
             return res.redirect('/home');
+        })
+        .catch(function(error){
+            console.log("Error with registration");
+            console.log(error);
+            
         });
+            });
+            });
+            // hash the passwords for real site
+            
+            
+        }else{
+            return res.redirect('/register');
+        }
+        
         }
 )});
 
-app.post('/logout', redirectLogin, (req, res) => {
+app.get('/logout', redirectLogin, (req, res) => { //fix this
     req.session.destroy(err => {
         if (err) {
             return res.redirect('/home');
@@ -213,14 +210,46 @@ app.post('/logout', redirectLogin, (req, res) => {
     });
 });
 
+console.log("sockets " + Object.keys(io.sockets.sockets));
+
 io.on('connection', function(socket){
-    console.log("User connected: " + socket.id);
+    console.log("User connected: " + socket.id +" " + user);
+    if(user != undefined){
+        console.log("User list before push: " + userList);
+        var sockUser = [socket.id,user];
+        userList.push(sockUser);
+        console.log("New userList: " + userList);
+    }
   socket.on('chat message', function(msg){
-     io.emit('chat message', msg); 
+        console.log("msg is " + msg);
+        
+     var bundle = [msg[0],msg[1]];
+     io.emit('chat message', bundle); 
   });
   socket.on('spam message', function(msg){
      console.log(msg);
      socket.emit('spam message', 'Spam detected, incorrect format.');
+  });
+  socket.on('disconnect', function(){
+      // connect user to socket.id
+      
+      //console.log("old userList: " + userList);
+      console.log("user disconnected " + socket.id);
+      
+      if(userList.length > 0){
+      
+      for(var i = 0; i < userList.length-1; i++){
+          
+          if(userList[i][0] === socket.id){
+          console.log("user found" + userList[i][0]);
+          var removeUser = userList[i][1];
+          userList.splice(i, 1); 
+      }
+          
+      }
+      }  
+      //console.log(userList);
+      io.emit('disconnect event', {customEvent: removeUser});
   });
 });
 
