@@ -9,13 +9,17 @@
  
   <!-- bootstrap css -->
  <!-- main css -->
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script> <!-- loads socket.io-client, exposes io() globally -->
+  <script async src="../message_handle.js"></script>
 
   <title>Node.js Chat App
   </title>
 </head>
 
-<body> 
+<body>
+  <p>Test area</p> 
 <span><h4 id="name" class='nav'>Hello <%= name %></h4> <a href="logout" class='nav'>   logout   </a></span>
 <div id="container">
 <span id="chat-area">
@@ -23,9 +27,9 @@
 <ul id = "messages"></ul>
 </span>
 
-<span id="whos-online"><h3>Who's Online</h3>
+<div id="whos-online"><h4>Who's Online</h4>
 <ul id="whos-online-list"></ul>
-</span>
+</div>
 </div>
 <div id = typing-area>
   <form name = "message" action="" id= "message-form" type="text">
@@ -36,7 +40,7 @@
     
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script> <!-- loads socket.io-client, exposes io() globally -->
-<script src="../message_handle.js"></script>
+
+
 </body>
 </html>
