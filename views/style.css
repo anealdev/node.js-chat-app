@@ -52,6 +52,10 @@ body{
     margin: 2%;
 }
 
+#whos-online-lsit {
+    background: yellow;
+}
+
 li{
     color: white;
     list-style-type:none;
@@ -60,4 +64,8 @@ li{
     padding: 1%;
     word-wrap: break-word;
     
+}
+
+p{
+    color: pink;
 }

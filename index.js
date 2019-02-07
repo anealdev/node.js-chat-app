@@ -16,6 +16,7 @@ const bcrypt = require('bcrypt');
 const bcryptSaltRounds = 12;
 var user;
 var userList = [];
+var chat_messages = [];
 
 mongoose.connect('mongodb://velma:&inkies101@ds115595.mlab.com:15595/chat', {
     useNewUrlParser: true
@@ -210,49 +211,45 @@ app.get('/logout', redirectLogin, (req, res) => { //fix this
     });
 });
 
-console.log("sockets " + Object.keys(io.sockets.sockets));
-
 io.on('connection', function(socket){
-    console.log("User connected: " + socket.id +" " + user);
-    if(user != undefined){
-        console.log("User list before push: " + userList);
-        var sockUser = [socket.id,user];
-        userList.push(sockUser);
-        console.log("New userList: " + userList);
+    console.log("User is connected: " + socket.id +" " + user);
+    
+    function updateUserList(){
+        io.emit('usernames', userList);
     }
-  socket.on('chat message', function(msg){
-        console.log("msg is " + msg);
-        
-     var bundle = [msg[0],msg[1]];
-     io.emit('chat message', bundle); 
+ 
+  socket.on('chat message', function(data){
+     //var bundle = [data[0],data[1]];
+     console.log("user sending message: " + socket.username);
+     console.log("data")
+     io.emit('chat message', {msg: data, username: socket.username} ); 
   });
+ 
   socket.on('spam message', function(msg){
      console.log(msg);
      socket.emit('spam message', 'Spam detected, incorrect format.');
   });
-  socket.on('disconnect', function(){
-      // connect user to socket.id
-      
-      //console.log("old userList: " + userList);
-      console.log("user disconnected " + socket.id);
-      
-      if(userList.length > 0){
-      
-      for(var i = 0; i < userList.length-1; i++){
-          
-          if(userList[i][0] === socket.id){
-          console.log("user found" + userList[i][0]);
-          var removeUser = userList[i][1];
-          userList.splice(i, 1); 
-      }
-          
-      }
-      }  
-      //console.log(userList);
-      io.emit('disconnect event', {customEvent: removeUser});
+  
+  socket.on('new user', function(data){
+     console.log("checking list " + userList.indexOf(data));
+     if(userList.indexOf(data) === -1){
+         console.log('username does not exist yet');
+         socket.username = data;
+         userList.push(socket.username);
+         updateUserList();
+     } 
   });
-});
+  
+  socket.on('disconnect', function(data){
+      if(!socket.username){
+        return;  
+      }
+      userList.splice(userList.indexOf(socket.username), 1);
+      updateUserList();
+  });
 
+});
+ 
 http.listen(port, function(){
     console.log("listening on specified port");
 })
