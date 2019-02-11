@@ -5,6 +5,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT;
+const connect = process.env.CONNECT;
 const sessionMaxAge = parseInt(process.env.MAXAGE);
 const session_name = process.env.NAME;
 const IN_PROD = 'production';
@@ -15,10 +16,10 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const bcryptSaltRounds = 12;
 var user;
-var userList = [];
-var chat_messages = [];
+//var userList = [];
+var userList = {};
 
-mongoose.connect('mongodb://velma:&inkies101@ds115595.mlab.com:15595/chat', {
+mongoose.connect(connect, {
     useNewUrlParser: true
 },  function(error){
     if(error){
@@ -215,14 +216,31 @@ io.on('connection', function(socket){
     console.log("User is connected: " + socket.id +" " + user);
     
     function updateUserList(){
-        io.emit('usernames', userList);
+        io.emit('usernames', Object.keys(userList)); // returns an array of a given object's own property names, in the same order as we get with a normal loop
     }
  
-  socket.on('chat message', function(data){
-     //var bundle = [data[0],data[1]];
-     console.log("user sending message: " + socket.username);
-     console.log("data")
+  socket.on('chat message', function(data, callback){
+     var msg = data.trim();
+     if(msg.substr(0,3) === '/p '){
+         console.log("private message");
+         var msg = msg.substr(3);
+         var ind = msg.indexOf(' ');
+         if(ind !== -1){
+             var name = msg.substring(0, ind);
+             var msg = msg.substring(ind + 1);
+             if(name in userList){
+                 userList[name].emit('private', {msg: msg, username: socket.username} );
+                  console.log('Private message ' + msg);
+             }else{
+                 callback('Error! User not online.');
+             }
+            
+         }else{
+             callback('Error! Please follow the format for sending a private message.');
+         }
+     }else{
      io.emit('chat message', {msg: data, username: socket.username} ); 
+     }
   });
  
   socket.on('spam message', function(msg){
@@ -231,11 +249,10 @@ io.on('connection', function(socket){
   });
   
   socket.on('new user', function(data){
-     console.log("checking list " + userList.indexOf(data));
-     if(userList.indexOf(data) === -1){
-         console.log('username does not exist yet');
+     if(!(data in userList)){
+         console.log("new user, not in userList");
          socket.username = data;
-         userList.push(socket.username);
+         userList[socket.username] = socket;
          updateUserList();
      } 
   });
@@ -244,7 +261,7 @@ io.on('connection', function(socket){
       if(!socket.username){
         return;  
       }
-      userList.splice(userList.indexOf(socket.username), 1);
+      delete userList[socket.username];
       updateUserList();
   });
 

@@ -24,7 +24,12 @@ form.addEventListener('submit', function(e){
     var regex = new RegExp(/[\s]/);
     if (typeMessage != '' && !(typeMessage.length > 50 && regex.test(typeMessage) != true)){
         var msg = typeMessage;
-        socket.emit("chat message", msg);
+        socket.emit("chat message", msg, function(data){
+            var newMsg = document.createElement('div');
+            newMsg.setAttribute('class', 'error');
+            messages.appendChild(newMsg).innerHTML = data;
+            
+        });
         form.reset();    
     }else{
         console.log("spam");
@@ -38,8 +43,8 @@ socket.on('chat message', function(bundle){
     console.log("msg is: " + bundle.msg);
     var newMsg = document.createElement('div');
     var userName = document.createElement('span');
-    userName.setAttribute("class", "username");
-    userName.setAttribute("id", bundle.msg )
+   // userName.setAttribute("class", "username");
+    //userName.setAttribute("id", bundle.msg )
     var userMsg = document.createElement('span');
     userMsg.setAttribute("id", "user-msg");
     var spaceBetween = document.createElement('span');
@@ -63,3 +68,16 @@ socket.on('usernames', function(data){
    }
    $whosOnlineList.html(html);
 });
+
+socket.on('private', function(data){
+    var newMsg = document.createElement('div');
+    newMsg.setAttribute('class', 'private');
+    var userName = document.createElement('span');
+    var userMsg = document.createElement('span');
+    var spaceBetween = document.createElement('span');
+    messages.appendChild(newMsg);
+    newMsg.appendChild(userName).innerHTML= data.username;
+    newMsg.appendChild(spaceBetween).innerHTML= "   |   " ;
+    newMsg.appendChild(userMsg).innerHTML=data.msg;
+    
+})
