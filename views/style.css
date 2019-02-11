@@ -69,3 +69,11 @@ li{
 p{
     color: pink;
 }
+
+.private{
+    color: Violet;
+    font-style: italic;
+}
+.error {
+    color: red;
+}
