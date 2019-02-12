@@ -5,7 +5,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT;
-const connect = process.env.CONNECT;
+const connectInfo = process.env.CONNECT;
 const sessionMaxAge = parseInt(process.env.MAXAGE);
 const session_name = process.env.NAME;
 const IN_PROD = 'production';
@@ -19,7 +19,7 @@ var user;
 //var userList = [];
 var userList = {};
 
-mongoose.connect(connect, {
+mongoose.connect(connectInfo, {
     useNewUrlParser: true
 },  function(error){
     if(error){
