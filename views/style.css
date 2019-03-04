@@ -1,32 +1,118 @@
-body{
-    background-color: Black;
+*{
+ box-sizing: border-box;   
 }
 
-.nav{
+@font-face{
+    font-family: 'Biryani';
+    src: url(Biryani.ttf);
+}
+
+@font-face{
+    font-family: 'carbon';
+    src: url(carbon.ttf);
+}
+
+html {
+    background: url(images/lens.jpg) no-repeat center center fixed;
+    background-size: cover;
+}
+
+body{
+    background-color: #0A070A;
+    font-family: 'Amble', Arial, sans-serif;
+   
+}
+
+a { 
+    text-decoration: none;
+    color: inherit; 
+    
+} 
+
+.nav-container{
+    color: #f2f2f2;
+}
+
+.greeting{
     display: inline-block;
-    color: #b4b4b4;
+    color: #f2f2f2;
+}
+
+#title{
+    text-align: center;
+    padding: 5% 1% 0 1%;
+    margin: 1%;
+    color: #f2f2f2;
+    font-family: 'carbon', Arial, sans-serif;
+    font-size: 180%;
+    
+}
+
+#logout{
+    text-align: center;
+    font-style: italic;
+    display: inline-block;
+    border: thin solid #f2f2f2;
+    border-radius: 2%;
+    text-decoration: none;
+    color: Black;
+    background-color: #f2f2f2;
+    padding: .2%;
+}
+
+.column{
+    float: left;
+    padding: 2%;
+    width: 50%;
+    
+}
+
+.container{
+    border: thin solid blue;    
+}
+.container:after{
+    content:"";
+    display: table;
+    clear:both;
+    
 }
 
 #chat-area{
-    color: #00ccff;
-    border: solid thin #00ccff;
+    color: #72CEE5;
+    border: solid thin Black;
+    border-radius: 2%;
+    border-right: 0;
     background-color: #191919;
-    min-height: 80%;
-    width: 75%;
-}
+    height: 75vh;
+    overflow-y: auto;
+    width: 150%;
+ }
 
 .username{
     float: left;
-    color: #00ccff;
+    color: #ede4f7;
     width: 10%;
-}
-
-#user-msg {
-    color: #d9d9d9;
 }
 
 #messages{
     color: #f2f2f2;
+}
+
+.newMsg{
+    width: 95%;
+    border: solid thin black;
+    padding: 1%;
+}
+
+li{
+    color: white;
+    list-style-type:none;
+    border: thin solid Black;
+    border-radius: 2%;
+    margin: 1%;
+    padding: 1%;
+    word-wrap: break-word;
+    
 }
 
 #typing-area{
@@ -38,42 +124,94 @@ body{
     width: 80%;
 }
 #sub-but{
-    color: #00ccff;
-    background-color: Black;
-    border: thick solid gray;
+    color: #f2f2f2;
+    background-color: #191919;
+    border: thick solid #761c2d;
+    border-radius: 2%;
+}
+
+.sidebar{
+    float: right;
+    width: 44%;
+}
+
+#private-instructions{
+    color: #E6E6FA;
+    margin: 1%;
+    padding: 2%;
+    background-color: #191919;
 }
 
 #whos-online {
-    color: #00ccff;
-    border: solid thin #00ccff;
-    background-color: #191919;
-    width: 15%;
-    float: right;
-    margin: 2%;
-}
-
-#whos-online-lsit {
-    background: yellow;
-}
-
-li{
-    color: white;
-    list-style-type:none;
+    text-align: center;
+    color: #ede4f7;
     border: thin solid Black;
-    margin: 1%;
-    padding: 1%;
-    word-wrap: break-word;
-    
+    border-radius: 2%;
+    background-color: #191919;
+    margin: 2%;
+    height: 45%;
 }
 
-p{
-    color: pink;
+#whos_online_header{
+    padding: 1%;
+}
+
+.whos-online-user{
+    margin-right:25%;
 }
 
 .private{
-    color: Violet;
+    color: #edbfc7;
     font-style: italic;
+    width: 95%;
+    border: solid thin black;
+    padding: 1%;  
 }
+
 .error {
     color: red;
+    text-align: center;
+}
+
+.date{
+    font-size: 60%;
+    color: #8b8da9;
+}
+
+#msgUsername{
+    color: #ccc1d2;
+}
+
+#whosOnlineList{
+    text-align: center;
+}
+
+#form-container{
+    margin: auto;
+    width: 100%;
+    color: #f2f2f2;
+    text-align: center;
+    }
+.register-login-link{
+    padding: 1%;
+    margin: 1%;
+    text-align: center;
+}
+@media screen and (max-width: 600px){
+    .column{
+    width: 100%;
+}
+    #chat-area, #hello,#logout{
+    width: 100%;
+    }
+    
+    .sidebar{
+    float:left;
+    width: 100%;
+    }
+    
+    .form-control{
+        width: 100%;
+    }
+    
 }

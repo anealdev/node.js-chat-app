@@ -15,6 +15,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const bcryptSaltRounds = 12;
+const moment = require('moment');
 var user;
 //var userList = [];
 var userList = {};
@@ -29,6 +30,11 @@ mongoose.connect(connectInfo, {
 }
 });
 
+var chatSchema = new mongoose.Schema ({
+    username: String,
+    msg: String,
+    created: {type: Date, default: Date.now()}
+});
 var userSchema = new mongoose.Schema({
     name: String,
     email: String,
@@ -36,17 +42,12 @@ var userSchema = new mongoose.Schema({
 });
 
 var User = mongoose.model("User", userSchema); // create a model to use to have a template for each of the documents in the collection
+var Chat = mongoose.model("Message", chatSchema);
 
 app.use('/', express.static('views'));
-//app.set('views', path.join(__dirname, 'views'));
+
 app.set('trust proxy', 1); // trust first proxy, may need to remove this for heroku, set view engine
 app.set('view engine', 'ejs');
-
-/*const users = [
-    { id: 1, name: 'Alex', email: 'alex@gmail.com', password: 'secret' }, 
-    { id: 2, name: 'Penelope', email: 'penelope@gmail.com', password: 'secret' }, 
-    { id: 3, name: 'Hugo', email: 'hugo@gmail.com', password: 'secret' }
-];*/
 
 app.use(bodyParser.urlencoded({
     extended: true //default already, but must specify. Value can be any type when true
@@ -107,28 +108,12 @@ app.get('/home', redirectLogin, (req, res) => {
 });
 
 app.get('/login', redirectHome, (req, res) => { // have a login html file for this
-    res.send(`
-        <h1>Login</h1>
-        <form method='post' action='/login'>
-            <input type='email' name='email' placeholder='Email' required />
-            <input type='password' name='password' placeholder='Password' require />
-            <input type='submit' value='Submit' />
-            </form>
-        <a href="/register">Register</a>
-        `)
+    res.render('login');
 });
 
 app.get('/register', redirectHome, (req, res) => {
-    res.send(`
-        <h1>Register</h1>
-        <form method='post' action='/register'>
-            <input name='name' placeholder='Name' required />
-            <input type='email' name='email' placeholder='Email' required />
-            <input type='password' name='password' placeholder='Password' require />
-            <input type='submit' value='Submit' />
-            </form>
-            <a href="/login">Login</a>
-    `);
+    res.render('register', { error: req.session.error});
+    
 });
 
 app.post('/login', redirectHome, (req, res) => {
@@ -162,12 +147,16 @@ app.post('/login', redirectHome, (req, res) => {
 app.post('/register', redirectHome, (req, res) => {
     const { name, email, password } = req.body;
     User.find({email: email}, function(error, data){
+       
         if(error){
-            console.log(error);
-            return;
+           console.log(error);
+           return;
         }
-        if(data.length == 0){
-            
+        if(data.length > 0){ // email already exists in database
+           req.session.error = "Email already registered";
+           res.render('register', { error: "Email already registered"}); 
+        }
+        else if(data.length == 0){ // if email not found
             bcrypt.hash(password, bcryptSaltRounds)
             .then(function(hashedPassword){
                 User.create({
@@ -213,7 +202,15 @@ app.get('/logout', redirectLogin, (req, res) => { //fix this
 });
 
 io.on('connection', function(socket){
-    console.log("User is connected: " + socket.id +" " + user);
+    
+    var query = Chat.find({});
+    query.sort('-created').limit(10).exec(function(err, docs){
+        if(err){
+            throw err;
+        }
+      
+        socket.emit('load old msg', docs);
+    });
     
     function updateUserList(){
         io.emit('usernames', Object.keys(userList)); // returns an array of a given object's own property names, in the same order as we get with a normal loop
@@ -229,8 +226,10 @@ io.on('connection', function(socket){
              var name = msg.substring(0, ind);
              var msg = msg.substring(ind + 1);
              if(name in userList){
+                // display message to sender and private recipient only
                  userList[name].emit('private', {msg: msg, username: socket.username} );
-                  console.log('Private message ' + msg);
+                 socket.emit('private', {msg: msg, username: socket.username} );
+                  
              }else{
                  callback('Error! User not online.');
              }
@@ -239,7 +238,16 @@ io.on('connection', function(socket){
              callback('Error! Please follow the format for sending a private message.');
          }
      }else{
-     io.emit('chat message', {msg: data, username: socket.username} ); 
+        var newMsg = new Chat({msg: msg, username: socket.username});
+        console.log("chat msg from " + socket.username );
+       
+        newMsg.save(function(err){
+            if(err){
+                throw err;
+            }
+            io.emit('chat message', {msg: data, username: socket.username, created: newMsg.created} ); 
+        });
+        
      }
   });
  

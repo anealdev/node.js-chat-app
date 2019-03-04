@@ -9,31 +9,43 @@
  
   <!-- bootstrap css -->
  <!-- main css -->
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script> <!-- loads socket.io-client, exposes io() globally -->
   <script async src="../message_handle.js"></script>
+  
 
   <title>Node.js Chat App
   </title>
 </head>
 
 <body>
-  <p>Test area</p> 
-<span><h4 id="name" class='nav'>Hello <%= name %></h4> <a href="logout" class='nav'>   logout   </a></span>
-<div id="container">
-<span id="chat-area">
-<h1 id="test">Your message displays here</h1>
-<ul id = "messages"></ul>
-</span>
+<div id="title">WebSocket Chat</div>
+<span class="nav-container"><h4 id="name" class='greeting' id="hello">Hello <%= name %></h4> <a href="logout" class='greeting' id="logout">   logout   </a></span>
 
-<div id="whos-online"><h4>Who's Online</h4>
-<ul id="whos-online-list"></ul>
+<div id="container">
+
+<div class="column column-one">
+<div id="chat-area">
+<ul id = "messages"></ul>
 </div>
+</div>
+
+
+<div class="column column-two">
+<div class="sidebar">
+<div id="private-instructions"><p>Type /p then a user's name to send a private message, <br><br> example /p Rose. <br><br>User must be online to receive a private message.</p></div>
+<div id="whos-online"><h4 id="whos_online_header">Who's Online</h4>
+<ul id="whosOnlineList"></ul>
+</div>
+</div>
+</div>
+
 </div>
 <div id = typing-area>
   <form name = "message" action="" id= "message-form" type="text">
-    <h2>-----</h2>
+
     <input id = type-message placeholder="Type your message" maxlength=150>
     <button type="submit" id="sub-but">Submit</button>
     </form>

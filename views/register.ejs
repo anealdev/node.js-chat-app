@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <link rel="stylesheet" type="text/css" href="../style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+  <!-- bootstrap css -->
+ <!-- main css -->
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+ <script src="../checkLogin.js"></script>
+
+ <title>Node.js Chat App
+  </title>
+</head>
+
+<body>
+<div id="title">WebSocket Chat</div>
+ <div id="form-container">
+ 
+        <h1>Register</h1>
+        <form method='post' action='/register'>
+            <input name='name' placeholder='Name' required class="form-control" />
+            <input type='email' name='email' placeholder='Email' required class="form-control" />
+            <input type="password" name='password' minlength="6" class="form-control" id="inputPassword" placeholder="Password" required>
+            
+          <input type="password" minlength="6" class="form-control" name="passwordConfirm" id="inputPasswordConfirm" placeholder="Confirm Password" required>
+         
+          
+            <input type='submit' id="submitBtn" value='Submit' />
+            </form>
+           
+           <span class="error"> <h5> <%= error %> </h5> </span>
+            
+            <div class='register-login-link'>
+            <a href="/login">< Login ></a>
+            </div>
+           
+           </div> 
+            
+        
+ </body>
+</html>
